@@ -10,6 +10,14 @@ class UsersRepository extends Repository<User> {
 
     return user || undefined
   }
+
+  public async findByUserName(username: string): Promise<User | undefined> {
+    const user = await this.findOne({
+      where: { username }
+    })
+
+    return user || undefined
+  }
 }
 
 export default UsersRepository

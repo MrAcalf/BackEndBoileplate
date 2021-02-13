@@ -4,20 +4,34 @@ import UsersRepository from '../repositories/UsersRepository'
 
 interface RequestDTO {
   name: string
+  username: string
+  type: 'admin' | 'customer'
   email: string
   password: string
 }
 
 class CreateUserService {
-  public async execute({ name, email, password }: RequestDTO): Promise<User> {
+  public async execute({ name, username, type, email, password }: RequestDTO): Promise<User> {
     const usersRepository = getCustomRepository(UsersRepository)
-    const findUser = await usersRepository.findByEmail(email)
+    const findUserByEmail = await usersRepository.findByEmail(email)
 
-    if (findUser) {
+    if (findUserByEmail) {
       throw Error('Email já cadastrado')
     }
 
-    const user = usersRepository.create({ name, email, password })
+    const findUserByUsername = await usersRepository.findByUserName(username)
+
+    if (findUserByUsername) {
+      throw Error('Nome de usuário já existente')
+    }
+
+    const user = usersRepository.create({
+      name,
+      username,
+      type,
+      email,
+      password
+    })
 
     await usersRepository.save(user)
 

@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export default class CreateUsers1613169198328 implements MigrationInterface {
+export class CreateAddresses1613253534825 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'users',
+        name: 'addresses',
         columns: [
           {
             name: 'id',
@@ -14,24 +14,35 @@ export default class CreateUsers1613169198328 implements MigrationInterface {
             default: 'uuid_generate_v4()'
           },
           {
-            name: 'name',
+            name: 'userId',
+            type: 'uuid'
+          },
+          {
+            name: 'zipCode',
             type: 'varchar'
           },
           {
-            name: 'username',
+            name: 'state',
             type: 'varchar'
           },
           {
-            name: 'email',
-            type: 'varchar',
-            isUnique: true
-          },
-          {
-            name: 'password',
+            name: 'city',
             type: 'varchar'
           },
           {
-            name: 'type',
+            name: 'number',
+            type: 'varchar'
+          },
+          {
+            name: 'complement',
+            type: 'varchar'
+          },
+          {
+            name: 'lat',
+            type: 'varchar'
+          },
+          {
+            name: 'long',
             type: 'varchar'
           },
           {
@@ -44,12 +55,22 @@ export default class CreateUsers1613169198328 implements MigrationInterface {
             type: 'timestamp with time zone',
             default: 'now()'
           }
+        ],
+        foreignKeys: [
+          {
+            name: 'AddressesUsers',
+            columnNames: ['userId'],
+            referencedColumnNames: ['id'],
+            referencedTableName: 'users',
+            onDelete: 'SET NULL',
+            onUpdate: 'CASCADE'
+          }
         ]
       })
     )
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('users')
+    await queryRunner.dropTable('addresses')
   }
 }
