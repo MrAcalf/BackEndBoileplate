@@ -1,12 +1,19 @@
 import { Router, Request, Response } from 'express'
-import { getCustomRepository } from 'typeorm'
+import { getRepository } from 'typeorm'
 const usersRouter = Router()
 
 import CreateUserService from '../services/CreateUserService'
-import UsersRepository from '../repositories/UsersRepository'
+
+import ensureAuthenticated from '../middlewares/ensureAuthenticated'
+import User from '../models/User'
+
+usersRouter.use(ensureAuthenticated)
+
 usersRouter.get('/', async (request: Request, response: Response) => {
-  const usersRepository = getCustomRepository(UsersRepository)
-  const users = await usersRepository.find()
+  const usersRepository = getRepository(User)
+  const foundUsers = await usersRepository.find()
+
+  const users = foundUsers.map(({ password, ...user }) => user)
 
   return response.json(users)
 })
@@ -24,6 +31,9 @@ usersRouter.post('/', async (request: Request, response: Response) => {
       email,
       password
     })
+
+    // @ts-expect-error ignore because api doesn´t need return password on return
+    delete user.password
 
     return response.json(user)
   } catch (err) {

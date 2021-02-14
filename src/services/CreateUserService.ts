@@ -1,6 +1,8 @@
-import User from '../models/User'
 import { getCustomRepository } from 'typeorm'
 import UsersRepository from '../repositories/UsersRepository'
+import { hash } from 'bcryptjs'
+
+import User from '../models/User'
 
 interface RequestDTO {
   name: string
@@ -25,12 +27,14 @@ class CreateUserService {
       throw Error('Nome de usuário já existente')
     }
 
+    const hashedPassword = await hash(password, 8)
+
     const user = usersRepository.create({
       name,
       username,
       type,
       email,
-      password
+      password: hashedPassword
     })
 
     await usersRepository.save(user)

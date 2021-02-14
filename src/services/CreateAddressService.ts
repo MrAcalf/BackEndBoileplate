@@ -1,6 +1,5 @@
+import { getRepository } from 'typeorm'
 import Address from '../models/Adress'
-import { getCustomRepository } from 'typeorm'
-import AddressRepository from '../repositories/AddressRepository'
 
 interface RequestDTO {
   userId: string
@@ -24,16 +23,14 @@ class CreateUserService {
     lat,
     long
   }: RequestDTO): Promise<Address> {
-    const addressRepository = getCustomRepository(AddressRepository)
+    const addressRepository = getRepository(Address)
 
-    const checkExist = addressRepository.findOne({
-      where: userId
+    const checkExist = await addressRepository.findOne({
+      where: { userId }
     })
 
     if (checkExist) {
-      throw Error(
-        'Usuário já possui endereço cadastrado, vá para a tela de edição para alterar o endereço.'
-      )
+      throw Error('Edite o endereço que já existe no cadastro')
     }
 
     const address = addressRepository.create({

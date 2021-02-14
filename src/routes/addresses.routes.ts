@@ -1,14 +1,14 @@
 import { Router, Request, Response } from 'express'
-import { getCustomRepository } from 'typeorm'
+import { getRepository } from 'typeorm'
 const addressRouter = Router()
 
 import CreateAddressService from '../services/CreateAddressService'
-import AddressRepository from '../repositories/AddressRepository'
+import Adress from '../models/Adress'
 
 addressRouter.get('/', async (request: Request, response: Response) => {
   const { userId } = request.body
 
-  const addressRepository = getCustomRepository(AddressRepository)
+  const addressRepository = getRepository(Adress)
 
   const address = await addressRepository.findOne({
     where: { userId }
@@ -23,7 +23,7 @@ addressRouter.post('/', async (request: Request, response: Response) => {
 
     const createAddress = new CreateAddressService()
 
-    const user = await createAddress.execute({
+    const address = await createAddress.execute({
       userId,
       zipCode,
       state,
@@ -34,7 +34,7 @@ addressRouter.post('/', async (request: Request, response: Response) => {
       long
     })
 
-    return response.json(user)
+    return response.json(address)
   } catch (err) {
     return response.status(400).json({ error: err.message })
   }
