@@ -1,4 +1,4 @@
-# Back end Zukk Challenge
+# Back end Boilerplate
 
 To run this project you will need docker container on localhost
 
