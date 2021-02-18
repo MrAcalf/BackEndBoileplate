@@ -17,7 +17,7 @@ class CreateUserService {
     type,
     email,
     password
-  }: ICreateUserDTO): Promise<User | undefined> {
+  }: ICreateUserDTO): Promise<Omit<User, 'password'> | undefined> {
     const findUserByEmail = await this.usersRepository.findByEmail(email)
 
     if (findUserByEmail) {
@@ -41,6 +41,9 @@ class CreateUserService {
       email,
       password: hashedPassword
     })
+
+    // @ts-expect-error ignore because api should not return the user password
+    delete user.password
 
     return user
   }

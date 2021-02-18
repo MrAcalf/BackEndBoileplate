@@ -10,12 +10,17 @@ class FindUserService {
     @inject('UsersRepository')
     private usersRepository: IUsersRepository
   ) {}
-  public async execute({ id }: IFindUserDTO): Promise<User | undefined> {
+  public async execute({
+    id
+  }: IFindUserDTO): Promise<Omit<User, 'password'> | undefined> {
     const user = await this.usersRepository.findById(id)
 
     if (!user) {
       throw new AppError('Usuário não encontrado')
     }
+
+    // @ts-expect-error ignore because api should not return the user password
+    delete user.password
 
     return user
   }
